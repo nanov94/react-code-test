@@ -1,6 +1,6 @@
 import { UserDTO } from "./UserDTO";
 
-export interface ListUsersDTO {
+export interface UserListDTO {
     data: UserDTO[];
     page: number;
     per_page: number;
