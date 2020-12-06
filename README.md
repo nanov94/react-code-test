@@ -1,3 +1,19 @@
+# How to run
+
+* git clone https://github.com/nanov94/react-code-test.git
+* yarn install
+* npm run start
+* enjoy :)
+
+# Screenshots
+## Mobile view
+* ![Loading](https://drive.google.com/file/d/1U8RqkmBMVIxKnGZw-g_pxXOYKGJK8Z_D/view?usp=sharing)
+* ![Users](https://drive.google.com/file/d/1ONmggIw-dFf7PQ9p9TVBhP9iN00W7Vp_/view?usp=sharing)
+
+## Desktop view
+* ![Loading](https://drive.google.com/file/d/18PCpMVp92OuB1jAlxCiGIwyUl9MhA0x7/view?usp=sharing)
+* ![Users](https://drive.google.com/file/d/1No-up_M0PnYp3EAK3KqOCWr6PvKNnE-R/view?usp=sharing)
+
 # Ombori React Code Test
 
 Hi there, we're really excited that you've made it this far in our interview process and look forward to getting to know you better.
