@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 
-import './Header.scss';
+import s from './Header.module.scss';
 
 class Header extends Component {
     render() {
         return (
-            <div>
+            <div className={s.wrapHeader}>
                 Users
             </div>
         );

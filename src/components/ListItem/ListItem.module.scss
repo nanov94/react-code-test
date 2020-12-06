@@ -1,0 +1,29 @@
+.wrapListItem {
+    display: flex;
+    width: 100%;
+    padding: 15px;
+    border-bottom: 2px grey solid;
+
+    img {
+        border-radius: 50%;
+    }
+
+    .imgMobile img {
+        height: 100px;
+    }
+
+    .wrapInfo {
+        padding-left: 10px;
+        text-align: start;
+
+        & > div:first-child {
+            font-weight: bold;
+            height: 50%;
+        }
+
+        & > div:last-child {
+            color: grey;
+            height: 50%;
+        }
+    }
+}

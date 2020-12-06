@@ -1,14 +1,37 @@
 import React, { Component } from 'react';
-import './App.css';
 import Header from './components/Header/Header';
-import List from './components/List/List';
+import Loading from './components/Loading/Loading';
+import UserList from './components/UserList/UserList';
+import { testTimeoutLoadingPageMs } from './constants';
 
-class App extends Component {
+import s from './App.module.scss';
+
+interface AppState {
+  isLoading: boolean;
+}
+
+class App extends Component<{}, AppState> {
+  constructor(props: any) {
+    super(props);
+
+    this.state = {
+      isLoading: true,
+    };
+
+    setTimeout(() => {
+      this.setState({ isLoading: false });
+    }, testTimeoutLoadingPageMs);
+  }
+
   render() {
+    if (this.state.isLoading) {
+      return <Loading />;
+    }
+
     return (
-      <div className="App">
+      <div className={s.App}>
         <Header />
-        <List />
+        <UserList />
       </div>
     );
   }
