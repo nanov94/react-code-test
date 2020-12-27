@@ -1,7 +1,7 @@
 # How to run
 
 * git clone https://github.com/nanov94/react-code-test.git
-* yarn install
+* npm install
 * npm run start
 * enjoy :)
 
