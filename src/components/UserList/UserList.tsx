@@ -44,10 +44,10 @@ const UserList = () => {
         setIsFetching(false);
     }, [isFetching]);
 
-    const { isLoadingUsers, isNoUsers, isError } = useGetUsers(dispatchCallback, isFetching);
+    const { isLoading, isNoUsers, isError } = useGetUsers(dispatchCallback, isFetching);
     const users = useSelector((state: RootReducerState) => state.user.users);
 
-    if (isLoadingUsers) {
+    if (isLoading) {
         return <Loading />;
     }
 

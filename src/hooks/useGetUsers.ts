@@ -4,7 +4,7 @@ import { UserListDTO } from '../client/DTOs/UserListDTO';
 
 const useGetUsers = (dispatchCallback: (data: any) => void, isFetching: boolean) => {
     const [pageNumber, setPageNumber] = useState(1);
-    const [isLoadingUsers, setIsLoadingUsers] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
     const [isNoUsers, setIsNoUsers] = useState(false);
     const [isError, setIsError] = useState(false);
 
@@ -28,14 +28,14 @@ const useGetUsers = (dispatchCallback: (data: any) => void, isFetching: boolean)
                         setIsError(true);
                     })
                     .finally(() => {
-                        setIsLoadingUsers(false);
+                        setIsLoading(false);
                     });
             }, 1000);
         }
     });
 
     return {
-        isLoadingUsers,
+        isLoading,
         isNoUsers,
         isError,
     };

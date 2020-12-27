@@ -7,10 +7,10 @@ import { testTimeoutLoadingPageMs } from './constants';
 import s from './App.module.scss';
 
 const App = () => {
-    const [isLoading, setIsLoadingApp] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
 
     setTimeout(() => {
-        setIsLoadingApp(false);
+        setIsLoading(false);
     }, testTimeoutLoadingPageMs);
 
     if (isLoading) {
