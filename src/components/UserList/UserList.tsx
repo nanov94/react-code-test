@@ -1,145 +1,80 @@
-import React, { Component, Suspense } from 'react';
-import { UserListDTO } from '../../client/DTOs/UserListDTO';
-import { UserDTO } from '../../client/DTOs/UserDTO';
-import { getUserList } from '../../client/ReqresClient';
-import { connect } from 'react-redux';
-import { addUserList } from '../../actions/userAction';
+import { lazy, useState, useEffect, Suspense, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Loading from '../Loading/Loading';
+import { UserDTO } from '../../client/DTOs/UserDTO';
+import { addUserList } from '../../actions/userAction';
+import { RootReducerState } from '../../reducers';
+import useGetUsers from '../../hooks/useGetUsers';
 
-const ListItem = React.lazy(() => import('../ListItem/ListItem'));
+const ListItem = lazy(() => import('../ListItem/ListItem'));
 
-interface UserListStateToProps {
-    users: UserDTO[];
-}
+const UserList = () => {
+    const [isFetching, setIsFetching] = useState(false);
 
-interface UserListState {
-    isLoading: boolean;
-    isError: boolean;
-    isFetching: boolean;
-    isNoUsers: boolean;
-    pageNumber: number;
-}
+    const dispatch = useDispatch();
+    const dispatchCallback = useCallback(
+        (userList) => dispatch(addUserList(userList)),
+        [dispatch]
+    );
 
-interface UserListDispatchToProps {
-    addUserList: (userList: UserDTO[]) => void;
-}
-
-type UserListProps = UserListStateToProps & UserListDispatchToProps;
-
-class UserList extends Component<UserListProps, UserListState> {
-    constructor(props: any) {
-        super(props);
-
-        this.state = {
-            isLoading: true,
-            isError: false,
-            isFetching: false,
-            isNoUsers: false,
-            pageNumber: 1,
+    useEffect(() => {
+        const handleScroll = () => {
+            const { scrollTop, offsetHeight } = document.documentElement;
+            if (Math.ceil(window.innerHeight + scrollTop) < offsetHeight || isFetching) {
+                return;
+            }
+    
+            setIsFetching(true);
         }
-    }
 
-    componentDidMount() {
-        this.getUsers();
-        window.addEventListener('scroll', this.handleScroll);
-    }
+        setIsFetching(true);
+        window.addEventListener('scroll', handleScroll);
 
-    componentDidUpdate() {
-        if (!this.state.isFetching) {
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+        if (!isFetching) {
             return;
         }
 
-        this.getUsers();
-        this.setState((state) => ({ ...state, isFetching: false }));
+        setIsFetching(false);
+    }, [isFetching]);
+
+    const { isLoadingUsers, isNoUsers, isError } = useGetUsers(dispatchCallback, isFetching);
+    const users = useSelector((state: RootReducerState) => state.user.users);
+
+    if (isLoadingUsers) {
+        return <Loading />;
     }
 
-    getUsers = () => {
-        setTimeout(() => {
-            getUserList(this.state.pageNumber)
-                .then((userList: UserListDTO) => {
-                    if (userList.total_pages < userList.page && userList.data.length === 0) {
-                        this.setState((state) => ({ ...state, isNoUsers: true }));
+    if (isError) {
+        return <div> Error </div>;
+    }
 
-                        return;
-                    }
-
-                    this.props.addUserList(userList.data);
-                    this.setState((state) => ({ ...state, pageNumber: state.pageNumber + 1 }));
+    return (
+        <div>
+            {
+                users.map((user: UserDTO) => {
+                    return (
+                        <div key={user.email}>
+                            <Suspense fallback={<div>Get more users</div>}>
+                                <ListItem
+                                    img={user.avatar}
+                                    title={`${user.first_name} ${user.last_name}`}
+                                    additionalInfo={user.email}
+                                />
+                            </Suspense>
+                        </div>
+                    )
                 })
-                .catch((error: any) => {
-                    console.log(`Server is not available! Error: ${error}.`);
-                    this.setState((state) => ({
-                        ...state,
-                        isError: true,
-                    }));
-                })
-                .finally(() => {
-                    this.setState((state) => ({
-                        ...state,
-                        isLoading: false,
-                    }));
-                });
-        }, 1000);
-    };
-
-    handleScroll = () => {
-        if (Math.ceil(window.innerHeight + document.documentElement.scrollTop) < document.documentElement.offsetHeight
-            || this.state.isFetching) {
-            return;
-        }
-
-        this.setState((state) => ({ ...state, isFetching: true }));
-    }
-
-    render() {
-        const { users } = this.props;
-        const { isLoading, isError, isNoUsers } = this.state;
-
-        if (isLoading) {
-            return <Loading />;
-        }
-
-        if (isError) {
-            return <div> Error </div>;
-        }
-
-        return (
-            <div>
-                {
-                    users.map((user: UserDTO) => {
-                        return (
-                            <div key={user.id}>
-                                <Suspense fallback={<div>Get more users</div>}>
-                                    <ListItem
-                                        img={user.avatar}
-                                        title={`${user.first_name} ${user.last_name}`}
-                                        additionalInfo={user.email}
-                                    />
-                                </Suspense>
-                            </div>
-                        )
-                    })
-                }
-                {isNoUsers && <div>No more users</div>}
-            </div>
-        );
-    }
+            }
+            {isNoUsers && <div>No more users</div>}
+        </div>
+    );
 }
 
-const mapStateToProps = (state: any) => {
-    const { user } = state;
-
-    const pocketStateToProps: UserListStateToProps = {
-        users: user.users,
-    };
-
-    return pocketStateToProps;
-}
-
-const mapDispatchToProps = (dispatch: any) => {
-    return {
-        addUserList: (userList: UserDTO[]) => dispatch(addUserList(userList)),
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(UserList);
+export default UserList;

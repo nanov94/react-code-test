@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { FC } from 'react';
 import { isMobileView } from '../../utils/screen';
 
 import s from './ListItem.module.scss';
@@ -9,35 +10,26 @@ interface ListItemProps {
     img: string;
 }
 
-interface ListItemState {
-    isMobileView: boolean;
+const ListItem: FC<ListItemProps> = ({ additionalInfo, title, img }) => {
+    const isMobile = isMobileView();
+
+    return (
+        <div className={s.wrapListItem}>
+            <div className={isMobile ? s.imgMobile : ''}>
+                <img src={img} alt='' />
+            </div>
+            <div className={s.wrapInfo}>
+                <div>{title}</div>
+                {additionalInfo && <div>{additionalInfo}</div>}
+            </div>
+        </div >
+    );
 }
 
-class ListItem extends Component<ListItemProps, ListItemState> {
-    constructor(props: ListItemProps) {
-        super(props);
-
-        this.state = {
-            isMobileView: isMobileView(),
-        }
-    }
-
-    render() {
-        const { additionalInfo, title, img } = this.props;
-        const { isMobileView } = this.state;
-
-        return (
-            <div className={s.wrapListItem}>
-                <div className={isMobileView ? s.imgMobile : ''}>
-                    <img src={img} />
-                </div>
-                <div className={s.wrapInfo}>
-                    <div>{title}</div>
-                    {additionalInfo && <div>{additionalInfo}</div>}
-                </div>
-            </div >
-        );
-    }
+ListItem.propTypes = {
+    additionalInfo: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    img: PropTypes.string.isRequired,
 }
 
 export default ListItem;
